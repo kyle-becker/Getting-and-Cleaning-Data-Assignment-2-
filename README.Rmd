@@ -1,0 +1,39 @@
+---
+title: "README"
+author: "Kyle Becker"
+date: "March 5, 2017"
+output: html_document
+---
+
+## Opening Training and Testing Data Information
+The script begins by reading each of the dataframes into memory. Specifically the X training dataset, the Y training data set, the X Testing data set, the Y Testing data set, the subject dataframe and the feature list. Specifically the X and Y datasets are read into memory because theses contain the variables to be analyzed. The subject dataframe is read into memory because it contains the necessary information about each participant in the study. Lastly the features dataframe contains the name of each feature in the dataset.
+
+## Assigning Testing and Training Column Labels
+For the Training and Testing data set each column name is taken from the features file and assigned to the appropriate column. This is because the current column names of v1, v2 are not descriptive. The make.names function is used to convert each feature name into a correct format for dataframes. Additionally the subject column names are changed to Subject.Label to make them more descriptive.
+
+## Activity Labels
+The activity labels are then read into memory and the two columns renamed Activity.ID and Activity.Label to be more descriptive
+
+## Merging Data Frames
+After the columns are renamed the Training X, Training Y and Subject information for the training dataset columns are combined into one dataframe using the R function cbind. This is also done using the Testing X, Testing Y and Testing subject information dataframes. Once this is completed the newly created Training and Test Data sets are combined into one using the rbind function which combines dataframes based on rows.
+
+## Filtering Columns
+After the data is combined into one dataframe the grepl function is used to search column names for several key words:
+-std (standard deviation)
+-mean
+-Subject.Label
+-Activity.ID
+
+These columns were selected because it was stated in the assignment that the data should be summarized by standard deviation, mean. The subject.Label and Activity.ID are included because they are unique identifiers required to determine the participany number and the activity they were performing.
+
+## Activity ID Merge
+Once the necessary columns are selected the activity ID information is merged using the merge function in R. This is because if this data set were to be used for a machine learning algorithm, the individual would have to know what Activity the individual was performing and see if the algorithm was correctly predicting that activity being performed.
+
+## Second Average Tidy Data Set
+Once the information is merged the data set is then summarized using the average function by Subject and Activity ID using the aggregate function. Once that is completed the datafrane is then sorted by Subject ID then Activity ID.
+
+## Export Tidy Data Set
+Once the file is ordered it is then exported using the read.txt file.
+
+
+

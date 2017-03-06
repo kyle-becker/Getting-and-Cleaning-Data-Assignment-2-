@@ -1,0 +1,93 @@
+---
+title: "CodeBook"
+author: "Kyle Becker"
+date: "February 20, 2017"
+output: html_document
+---
+
+## Data Summary
+
+The following raw data set was obtained from the UCI Machine learning Repository. This data set was collected using 30 volunteers. Each volunteer was between the ages of 19 and 48 years old and was given a smartphone (Samsung Galaxy S II) which was attached to their waist. Each volunteer wearing the smartphone was asked to complete six different forms of motion specifically walking, walking upsatairs, walking downstairs, sitting, standing, laying. Using the smartphones embedded accelerometer and gyroscope, the researchers captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. 
+
+## Variable Explanation
+Each subject had the following informationt tracked:
+
+- Triaxial acceleration from the accelerometer (total acceleration) and the estimated body acceleration. 
+- Triaxial Angular velocity from the gyroscope. 
+- A 561-feature vector with time and frequency domain variables. 
+- Its activity label. 
+- An identifier of the subject who carried out the experiment.
+
+
+##Variable list and type of starting Data Sets
+The following data set was created by combining the X training set and the X Test set as well as the Y training set and Y Test set into one data frame. Once each of the 4 dataframes were combined into one. Then the columns were filtered to only include information that contained the word mean std(standard deviation) and the appropriate Acivity ID and Subject ID.
+
+A summary of each variable type and name is included below:
+
+```{r Training, echo=FALSE}
+# Opening Training Data Information
+X_TRAIN <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\train\\X_train.txt")
+Y_TRAIN <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\train\\y_train.txt")
+SUBJECT_TRAIN <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\train\\subject_train.txt")
+FEATURES <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\features.txt")
+
+
+# Opening Testing Data Information
+X_TEST <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\test\\X_test.txt")
+Y_TEST <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\test\\y_test.txt")
+SUBJECT_TEST <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\test\\subject_test.txt")
+FEATURES <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\features.txt")
+
+# Assign Training column labels
+names(X_TRAIN) <-  make.names(FEATURES$V2)
+names(Y_TRAIN) <- "Activity.ID"
+names(SUBJECT_TRAIN) <- "Subject.Label"
+
+# Assign Testing column labels
+names(X_TEST) <- make.names(FEATURES$V2)
+names(Y_TEST) <- "Activity.ID"
+names(SUBJECT_TEST) <- "Subject.Label"
+
+# Activity Labels
+Activity_Labels <- read.table("C:\\Users\\kbec\\Desktop\\Getting Data\\Assignment 2\\activity_labels.txt")
+names(Activity_Labels) <- c("Activity.ID", "Activity.Label")
+
+# Merging Data
+Merged_training_Data <- cbind(X_TRAIN, SUBJECT_TRAIN, Y_TRAIN)
+Merged_Testing_Data <- cbind(X_TEST, SUBJECT_TEST, Y_TEST)
+Data_Set <- rbind(Merged_training_Data,Merged_Testing_Data)
+
+
+Column_Names <- names(Data_Set)
+
+Mean_STD <- (grepl("Activity.ID", Column_Names) |
+             grepl("Subject.Label", Column_Names) |
+             grepl("mean", Column_Names) |    
+             grepl("std", Column_Names) 
+             )
+
+Data_Set_Mean_STD <- Data_Set[,Mean_STD == TRUE]
+
+Activity_Names_DS <- merge(Data_Set_Mean_STD, Activity_Labels, by="Activity.ID", all.x=TRUE)
+str(Activity_Names_DS)
+
+
+```
+
+Activity_ID: unique identifier (integer 1 to 6), determining the activity of each subject
+
+Activity_Label: Descriptive name categorical variable of each Activity (Factor Variable  WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING)
+
+Subject_ID : unique identifier (integer 1 to 30), identifying each subject (participant)
+
+## Average of each Column by Subject and Activity
+
+From this original data set a second data set was created with the average for each column by activity and subject. This was done using the aggregate function and then ordering the results by Subject ID and then Activity ID. A sample of the data is displayed below.
+
+```{Second Data Set, echo=FALSE}
+#Second Average Tidy Data Set
+Tidy_DS <- aggregate(.~Subject.Label + Activity.ID, Activity_Names_DS, mean)
+Tidy_DS_Ordered <- Tidy_DS[order(Tidy_DS$Subject.Label, Tidy_DS$Activity.ID),]
+head(Tidy_DS_Ordered)
+```
+
