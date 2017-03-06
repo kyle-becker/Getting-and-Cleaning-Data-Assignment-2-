@@ -59,7 +59,7 @@ Tidy_DS <- aggregate(.~Subject.Label + Activity.ID, Activity_Names_DS, mean)
 Tidy_DS_Ordered <- Tidy_DS[order(Tidy_DS$Subject.Label, Tidy_DS$Activity.ID),]
 
 #Export Tidy Data Set
-Tidy_DS <- write.table(Tidy_DS_Ordered,"C:\\Users\\kbec\\Desktop\\Getting Data\\Tidy.txt")
+Tidy_DS <- write.table(Tidy_DS_Ordered,"C:\\Users\\kbec\\Desktop\\Getting Data\\Tidy.txt", row.names = FALSE)
 
 
 
